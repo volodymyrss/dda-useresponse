@@ -6,7 +6,7 @@ import numpy as np
 
 import ddosa
 
-class FindARF(ddosa.DataAnalysis):
+class FindResponse(ddosa.DataAnalysis):
     input_scw=ddosa.ScWData
     input_ic=ddosa.ICRoot
 
