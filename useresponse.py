@@ -4,35 +4,50 @@ import os
 import astropy.io.fits as fits
 import numpy as np
 
+import ast
 import ddosa
+import dataanalysis.core as da
+
+import findic
+
+class FindICARF(findic.FindICIndexEntry):
+    ds="ISGR-ARF.-RSP"
+
+
+class FindICRMF(findic.FindICIndexEntry):
+    ds="ISGR-RMF.-RSP"
 
 class FindResponse(ddosa.DataAnalysis):
-    input_scw=ddosa.ScWData
-    input_ic=ddosa.ICRoot
+#    input_findicarf = FindICARF
+    input_findicrmf = FindICRMF
 
     def main(self):
-        t1,t2=self.input_scw.get_t()
+        self.rmf_path=self.input_findicrmf.member_location
 
-        idx=fits.open(self.input_ic.icroot+"/idx/ic/ISGR-ARF.-RSP-IDX.fits")[1].data
+class FindICEBDS(findic.FindICIndexEntry):
+    ds="ISGR-EBDS-MOD"
 
-        vstart=idx['VSTART']
-        vstop=idx['VSTOP']
+class SpectraBins(ddosa.SpectraBins):
+    input_ic_ebds = FindICEBDS
 
-        m_v=(vstart<t1) & (vstop>t2)
+    rmfbins=True
 
-        print t1,t2
-        print idx[m_v]
+    version="v1"
 
-        i_s=np.argsort(idx['VSTART'][m_v])
-        print idx[m_v][i_s]
-        i=i_s[-1]
-        print idx[m_v][i]
-        print vstart[m_v][i]-t1,vstop[m_v][i]-t2
+    ebins=None
 
-        arf_path=idx['MEMBER_LOCATION'][m_v][i]
-        arf_path_abs=os.path.abspath(self.input_ic.icroot+"/idx/ic/"+arf_path)
-        print arf_path_abs
+    def get_version(self):
+        v=super(SpectraBins,self).get_version(self)
+        if self.ebins is None:
+            v += ".ic256"
+        else:
+            v += ".rebin%i"%len(self.ebins)
 
-        print fits.open(arf_path_abs)[1].header
+    def main(self):
+        self.binrmf=self.input_ic_ebds.member_location
+        e=fits.open(self.binrmf)[1].data
+        self.bins=zip(e['E_MIN'],e['E_MAX'])
+        self.binrmfext=self.binrmf+'[1]'
 
-        self.arf_path=arf_path_abs
+    def get_binrmfext(self):
+        return self.binrmfext
