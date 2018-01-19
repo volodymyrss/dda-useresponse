@@ -34,6 +34,11 @@ class CompressEBins(ddosa.DataAnalysis):
 
     factor=1
 
+    def get_version(self):
+        v=super(CompressEBins,self).get_version()
+        v+="_f%i"%self.factor
+        return v
+
     def main(self):
         e = fits.open(self.input_ic_ebds.member_location)[1].data
         ic_bins = zip(e['E_MIN'], e['E_MAX'])
