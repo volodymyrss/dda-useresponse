@@ -9,7 +9,9 @@ import ddosa
 import dataanalysis.core as da
 import pilton
 
-import findic
+from dataanalysis.importing import load_by_name
+#import findic
+findic=load_by_name("git://findic")[0]
 
 class FindICARF(findic.FindICIndexEntry):
     ds="ISGR-ARF.-RSP"
