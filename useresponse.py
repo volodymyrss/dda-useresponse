@@ -35,7 +35,7 @@ class CompressEBins(ddosa.DataAnalysis):
     factor=1
 
     def get_version(self):
-        v=super(CompressEBins,self).get_version()
+        v=ddosa.DataAnalysis.get_version(self)
         v+="_f%i"%self.factor
         return v
 
