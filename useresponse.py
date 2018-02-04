@@ -70,7 +70,7 @@ class RebinResponse(ddosa.DataAnalysis):
     input_ic_ebds = FindICEBDS
     input_ebins=CompressEBins
 
-    cached=True
+    cached=False
 
     def main(self):
         new_e = fits.open(self.input_ebins.ebds_mod_fn)[1]
