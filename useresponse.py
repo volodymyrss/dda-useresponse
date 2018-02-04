@@ -81,6 +81,8 @@ class RebinResponse(ddosa.DataAnalysis):
         orig_bins = zip(orig_e.data['E_MIN'], orig_e.data['E_MAX'])
         print("original bins",orig_bins)
 
+        print("original rmf",self.input_rsp.rmf_path)
+
         rmf_e=fits.open(self.input_rsp.rmf_path)[1]
 
         orig_rsp_fn="original_rsp_assembled.fits"
