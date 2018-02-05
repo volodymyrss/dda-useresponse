@@ -32,6 +32,8 @@ class FindResponse(ddosa.DataAnalysis):
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
 
+    input_scw=da.NoAnalysis
+
 
 class CompressEBins(ddosa.DataAnalysis):
     input_ic_ebds=FindICEBDS
