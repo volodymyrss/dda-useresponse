@@ -7,9 +7,13 @@ import numpy as np
 import ast
 import ddosa
 import dataanalysis.core as da
+import dataanalysis.importing as importing
 import pilton
 
-import findic
+try:
+    import findic
+except:
+    findic,findic_name=importing.load_by_name("git://findic")
 
 class FindICARF(findic.FindICIndexEntry):
     ds="ISGR-ARF.-RSP"
