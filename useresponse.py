@@ -73,6 +73,8 @@ class RebinResponse(ddosa.DataAnalysis):
     input_ic_ebds = FindICEBDS
     input_ebins=CompressEBins
 
+    version="v1"
+
     def main(self):
         new_e = fits.open(self.input_ebins.ebds_mod_fn)[1]
         new_bins = zip(new_e.data['E_MIN'], new_e.data['E_MAX'])
@@ -103,6 +105,8 @@ class RebinResponse(ddosa.DataAnalysis):
         ht['outfile']=new_rsp_fn
         ht['clobber']="yes"
         ht.run()
+
+        self.rmf=da.DataFile(new_rsp_fn)
 
 
 class SpectraBins(ddosa.SpectraBins):
