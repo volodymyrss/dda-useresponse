@@ -11,7 +11,7 @@ import pilton
 
 from dataanalysis.importing import load_by_name
 #import findic
-findic=load_by_name("git://findic")[0]
+#findic=load_by_name("git://findic/icversion")[0]
 
 class FindICARF(findic.FindICIndexEntry):
     ds="ISGR-ARF.-RSP"
@@ -22,10 +22,11 @@ class FindICRMF(findic.FindICIndexEntry):
 
 class FindResponse(ddosa.DataAnalysis):
 #    input_findicarf = FindICARF
+    input_scw=ddosa.ScWData
     input_findicrmf = FindICRMF
 
     def main(self):
-        self.rmf_path=self.input_findicrmf.member_location
+        self.rmf_path=self.input_findicrmf.get_member_location(self.input_scw)
 
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
@@ -42,7 +43,7 @@ class CompressEBins(ddosa.DataAnalysis):
         return v
 
     def main(self):
-        e = fits.open(self.input_ic_ebds.member_location)[1].data
+        e = fits.open(self.input_ic_ebds.get_member_location())[1].data
         ic_bins = zip(e['E_MIN'], e['E_MAX'])
 
         print("raw bins",ic_bins)
@@ -55,7 +56,7 @@ class CompressEBins(ddosa.DataAnalysis):
 
         print("compressed bins",o_ebins)
 
-        f=fits.open(self.input_ic_ebds.member_location)
+        f=fits.open(self.input_ic_ebds.get_member_location())
         f[1].data=f[1].data[:len(o_e1)]
 
         print(len(f[1].data['E_MIN']),len(o_e1))
@@ -77,7 +78,7 @@ class RebinResponse(ddosa.DataAnalysis):
         new_bins = zip(new_e.data['E_MIN'], new_e.data['E_MAX'])
         print("new bins:",new_bins)
 
-        orig_e = fits.open(self.input_ic_ebds.member_location)[1]
+        orig_e = fits.open(self.input_ic_ebds.get_member_location())[1]
         orig_bins = zip(orig_e.data['E_MIN'], orig_e.data['E_MAX'])
         print("original bins",orig_bins)
 
