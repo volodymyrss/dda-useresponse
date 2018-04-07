@@ -10,7 +10,7 @@ import dataanalysis.core as da
 import pilton
 
 from dataanalysis.importing import load_by_name
-#import findic
+import findic
 #findic=load_by_name("git://findic/icversion")[0]
 
 class FindICARF(findic.FindICIndexEntry):
