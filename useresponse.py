@@ -75,6 +75,10 @@ class RebinResponse(ddosa.DataAnalysis):
 
     version="v1"
 
+    @property
+    def rmf_path(self):
+        return self.rmf.get_path()
+
     def main(self):
         new_e = fits.open(self.input_ebins.ebds_mod_fn)[1]
         new_bins = zip(new_e.data['E_MIN'], new_e.data['E_MAX'])
