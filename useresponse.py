@@ -20,19 +20,19 @@ class FindResponse(ddosa.DataAnalysis):
 
         m_v=(vstart<t1) & (vstop>t2)
 
-        print t1,t2
-        print idx[m_v]
+        print(t1,t2)
+        print(idx[m_v])
 
         i_s=np.argsort(idx['VSTART'][m_v])
-        print idx[m_v][i_s]
+        print(idx[m_v][i_s])
         i=i_s[-1]
-        print idx[m_v][i]
-        print vstart[m_v][i]-t1,vstop[m_v][i]-t2
+        print(idx[m_v][i])
+        print(vstart[m_v][i]-t1,vstop[m_v][i]-t2)
 
         arf_path=idx['MEMBER_LOCATION'][m_v][i]
         arf_path_abs=os.path.abspath(self.input_ic.icroot+"/idx/ic/"+arf_path)
-        print arf_path_abs
+        print(arf_path_abs)
 
-        print fits.open(arf_path_abs)[1].header
+        print(fits.open(arf_path_abs)[1].header)
 
         self.arf_path=arf_path_abs
