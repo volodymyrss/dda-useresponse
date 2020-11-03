@@ -43,7 +43,8 @@ class CompressEBins(ddosa.DataAnalysis):
         return v
 
     def main(self):
-        e = fits.open(self.input_ic_ebds.get_member_location())[1].data
+        self.ic_ebds_member_location = self.input_ic_ebds.get_member_location()
+        e = fits.open(self.ic_ebds_member_location)[1].data
         ic_bins = zip(e['E_MIN'], e['E_MAX'])
 
         print("raw bins",ic_bins)
@@ -56,7 +57,7 @@ class CompressEBins(ddosa.DataAnalysis):
 
         print("compressed bins",o_ebins)
 
-        f=fits.open(self.input_ic_ebds.get_member_location())
+        f=fits.open(self.ic_ebds_member_location)
         f[1].data=f[1].data[:len(o_e1)]
 
         print(len(f[1].data['E_MIN']),len(o_e1))
@@ -70,8 +71,8 @@ class CompressEBins(ddosa.DataAnalysis):
 
 class RebinResponse(ddosa.DataAnalysis):
     input_rsp = FindResponse
-    input_ic_ebds = FindICEBDS
-    input_ebins=CompressEBins
+    #input_ic_ebds = FindICEBDS
+    input_ebins = CompressEBins
 
     version="v1"
 
@@ -84,7 +85,7 @@ class RebinResponse(ddosa.DataAnalysis):
         new_bins = zip(new_e.data['E_MIN'], new_e.data['E_MAX'])
         print("new bins:",new_bins)
 
-        orig_e = fits.open(self.input_ic_ebds.get_member_location())[1]
+        orig_e = fits.open(self.input_ebins.ic_ebds_member_location)[1]
         orig_bins = zip(orig_e.data['E_MIN'], orig_e.data['E_MAX'])
         print("original bins",orig_bins)
 
