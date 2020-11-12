@@ -24,9 +24,10 @@ class FindResponse(ddosa.DataAnalysis):
 #    input_findicarf = FindICARF
     input_scw=ddosa.ScWData
     input_findicrmf = FindICRMF
+    input_icroot = ddosa.ICRoot
 
     def main(self):
-        self.rmf_path=self.input_findicrmf.get_member_location(self.input_scw)
+        self.rmf_path=self.input_findicrmf.get_member_location(self.input_scw, self.input_icroot)
 
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
