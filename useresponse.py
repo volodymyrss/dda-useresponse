@@ -22,7 +22,7 @@ class FindICRMF(findic.FindICIndexEntry):
 
 class FindResponse(ddosa.DataAnalysis):
 #    input_findicarf = FindICARF
-    input_scw=ddosa.ScWData
+    input_scw = ddosa.ScWData
     input_findicrmf = FindICRMF
     input_icroot = ddosa.ICRoot
 
@@ -39,7 +39,7 @@ class CompressEBins(ddosa.DataAnalysis):
     factor=1
 
     def get_version(self):
-        v=super(CompressEBins,self).get_version()
+        v=super().get_version()
         v+="_f%i"%self.factor
         return v
 
