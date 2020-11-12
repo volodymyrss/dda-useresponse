@@ -104,12 +104,16 @@ class RebinResponse(ddosa.DataAnalysis):
 
         new_rsp_fn="rsp_rebinned.fits"
 
-        ht = pilton.heatool("rbnrmf")
-        ht['infile']=orig_rsp_fn
-        ht['binfile']=ebins_compress_fn
-        ht['outfile']=new_rsp_fn
-        ht['clobber']="yes"
-        ht.run()
+        try:
+            ht = pilton.heatool("rbnrmf")
+            ht['infile'] = orig_rsp_fn
+            ht['binfile'] = ebins_compress_fn
+            ht['outfile'] = new_rsp_fn
+            ht['clobber'] = "yes"
+            ht.run()
+        except Exception as e:
+            print("problem running rbnrmf", e)
+            raise
 
         self.rmf=da.DataFile(new_rsp_fn)
 
