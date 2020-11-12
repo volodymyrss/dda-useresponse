@@ -7,6 +7,7 @@ import numpy as np
 import ast
 import ddosa
 import dataanalysis.core as da
+import dataanalysis.hashtools as ht
 import pilton
 
 from dataanalysis.importing import load_by_name
@@ -20,14 +21,26 @@ class FindICARF(findic.FindICIndexEntry):
 class FindICRMF(findic.FindICIndexEntry):
     ds="ISGR-RMF.-RSP"
 
+class ICRMF(ddosa.DataAnalysis):
+    pass
+
 class FindResponse(ddosa.DataAnalysis):
 #    input_findicarf = FindICARF
     input_scw = ddosa.ScWData
     input_findicrmf = FindICRMF
     input_icroot = ddosa.ICRoot
 
+    version="v2"
+
+    #run_for_hashe=True
+
     def main(self):
-        self.rmf_path=self.input_findicrmf.get_member_location(self.input_scw, self.input_icroot)
+        self.ic_entry = self.input_findicrmf.find_entry(self.input_scw, self.input_icroot)
+        self.rmf_path = self.ic_entry['member_location']
+
+        print(self.ic_entry)
+
+        return ICRMF(input_icroot=self.input_icroot, use_rmf_path=self.rmf_path, version="v1-"+self.ic_entry['idx_hash'])
 
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
@@ -77,6 +90,8 @@ class RebinResponse(ddosa.DataAnalysis):
 
     version="v1"
 
+    cached=True
+
     @property
     def rmf_path(self):
         return self.rmf.get_path()
@@ -118,6 +133,25 @@ class RebinResponse(ddosa.DataAnalysis):
 
         self.rmf=da.DataFile(new_rsp_fn)
 
+
+class RebinResponseProcessingSummary(ddosa.DataAnalysis):
+    run_for_hashe=True
+
+    def main(self):
+        mf=RebinResponse(assume=[ddosa.ScWData(input_scwid="any",use_abstract=True),ddosa.Revolution(input_revid="any",use_abstract=True)]) # arbitrary choice of scw, should be the same: assumption of course
+        ahash=mf.process(output_required=False,run_if_haveto=False)[0]
+        print("generalized hash:",ahash)
+        rh=ht.shhash(ahash)
+        print("reduced hash",rh)
+        handle=da.DataHandle('processing_definition:'+rh[:8])
+        self.factory.note_factorization(dict(
+            origin_object=self.__class__.__name__,
+            origin_module=__name__,
+            generalized_hash=ahash,
+            reduced_hash=rh,
+            handle=handle.handle,
+        ))
+        return [handle]
 
 class SpectraBins(ddosa.SpectraBins):
     input_ic_ebds = CompressEBins
