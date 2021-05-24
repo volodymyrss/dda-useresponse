@@ -10,9 +10,14 @@ import dataanalysis.core as da
 import dataanalysis.hashtools as ht
 import pilton
 
-from dataanalysis.importing import load_by_name
+import dataanalysis.importing as importing
+import pilton
 import findic
-#findic=load_by_name("git://findic/icversion")[0]
+
+try:
+    import findic
+except:
+    findic,findic_name=importing.load_by_name("git://findic")
 
 class FindICARF(findic.FindICIndexEntry):
     ds="ISGR-ARF.-RSP"
@@ -44,6 +49,8 @@ class FindResponse(ddosa.DataAnalysis):
 
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
+
+    input_scw=da.NoAnalysis
 
 
 class CompressEBins(ddosa.DataAnalysis):
@@ -96,6 +103,8 @@ class RebinResponse(ddosa.DataAnalysis):
     def rmf_path(self):
         return self.rmf.get_path()
 
+    cached=False
+
     def main(self):
         new_e = fits.open(self.input_ebins.ebds_mod_fn)[1]
         new_bins = zip(new_e.data['E_MIN'], new_e.data['E_MAX'])
@@ -104,6 +113,8 @@ class RebinResponse(ddosa.DataAnalysis):
         orig_e = fits.open(self.input_ebins.ic_ebds_member_location)[1]
         orig_bins = zip(orig_e.data['E_MIN'], orig_e.data['E_MAX'])
         print("original bins",orig_bins)
+
+        print("original rmf",self.input_rsp.rmf_path)
 
         rmf_e=fits.open(self.input_rsp.rmf_path)[1]
 
@@ -133,6 +144,9 @@ class RebinResponse(ddosa.DataAnalysis):
 
         self.rmf=da.DataFile(new_rsp_fn)
 
+    @property
+    def rmf_path(self):
+        return self.rmf.get_path()
 
 class RebinResponseProcessingSummary(ddosa.DataAnalysis):
     run_for_hashe=True
