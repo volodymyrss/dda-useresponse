@@ -40,7 +40,7 @@ class FindResponse(ddosa.DataAnalysis):
 
         print(self.ic_entry)
 
-        return ICRMF(input_icroot=self.input_icroot, use_rmf_path=self.rmf_path, version="v1-"+self.ic_entry['idx_hash'])
+        return ICRMF(input_icroot=self.input_icroot, use_rmf_path=self.rmf_path, use_version="v1-ih"+self.ic_entry['idx_hash'])
 
 class FindICEBDS(findic.FindICIndexEntry):
     ds="ISGR-EBDS-MOD"
