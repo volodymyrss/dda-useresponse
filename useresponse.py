@@ -105,9 +105,11 @@ class RebinResponse(ddosa.DataAnalysis):
 
         orig_e = fits.open(self.input_ebins.ic_ebds_member_location)[1]
         orig_bins = zip(orig_e.data['E_MIN'], orig_e.data['E_MAX'])
+        orig_e.header['EXTNAME'] = "EBOUNDS"
         print("original bins",orig_bins)
 
         rmf_e=fits.open(self.input_rsp.rmf_path)[1]
+        rmf_e.header['EXTNAME'] = "MATRIX"
 
         orig_rsp_fn="original_rsp_assembled.fits"
         fits.HDUList([fits.PrimaryHDU(),orig_e,rmf_e]).writeto(orig_rsp_fn,overwrite=True)
@@ -120,7 +122,7 @@ class RebinResponse(ddosa.DataAnalysis):
                 print(oi,i1,i2,e1,e2)
                 f.write("%i %i %i\n"%(i1,i2,i2-i1+1))
 
-        new_rsp_fn="rsp_rebinned.fits"
+        new_rsp_fn="rsp_rebinned_stdname.fits"
 
         try:
             ht = pilton.heatool("rbnrmf")
@@ -133,7 +135,15 @@ class RebinResponse(ddosa.DataAnalysis):
             print("problem running rbnrmf", e)
             raise
 
-        self.rmf=da.DataFile(new_rsp_fn)
+
+        final_rsp_fn="rsp_rebinned.fits"
+
+        f = fits.open(new_rsp_fn)
+        f['MATRIX'].header['EXTNAME'] = 'ISGR-RMF.-RSP'
+        f['EBOUNDS'].header['EXTNAME'] = 'ISGR-EBDS-MOD'
+        f.writeto(final_rsp_fn, overwrite=True)
+
+        self.rmf=da.DataFile(final_rsp_fn)
 
 
 class RebinResponseProcessingSummary(ddosa.DataAnalysis):
