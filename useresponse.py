@@ -5,6 +5,8 @@ import astropy.io.fits as fits
 import numpy as np
 
 import ast
+import subprocess
+
 import ddosa
 import dataanalysis.core as da
 import dataanalysis.hashtools as ht
@@ -124,16 +126,37 @@ class RebinResponse(ddosa.DataAnalysis):
 
         new_rsp_fn="rsp_rebinned_stdname.fits"
 
+        use_ftrbnrmf = True
         try:
-            ht = pilton.heatool("rbnrmf")
-            ht['infile'] = orig_rsp_fn
-            ht['binfile'] = ebins_compress_fn
-            ht['outfile'] = new_rsp_fn
-            ht['clobber'] = "yes"
-            ht.run()
+            fhelp_output = subprocess.check_output(["fhelp", "rbnrmf"])
+            if "This task is now a wrapper to ftrbnrmf" in fhelp_output:
+                use_ftrbnrmf = True
         except Exception as e:
-            print("problem running rbnrmf", e)
-            raise
+            print("can not get fhelp rbnrmf", e)
+
+        if use_ftrbnrmf:
+            try:
+                ht = pilton.heatool("ftrbnrmf")
+                ht['infile'] = orig_rsp_fn
+                ht['binfile'] = ebins_compress_fn
+                ht['outfile'] = new_rsp_fn
+                ht['cmpmode'] = "binfile"
+                ht['clobber'] = "yes"
+                ht.run()
+            except Exception as e:
+                print("problem running ftrbnrmf", e)
+                raise
+        else:
+            try:
+                ht = pilton.heatool("rbnrmf")
+                ht['infile'] = orig_rsp_fn
+                ht['binfile'] = ebins_compress_fn
+                ht['outfile'] = new_rsp_fn
+                ht['clobber'] = "yes"
+                ht.run()
+            except Exception as e:
+                print("problem running rbnrmf", e)
+                raise
 
 
         final_rsp_fn="rsp_rebinned.fits"
