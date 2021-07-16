@@ -166,7 +166,7 @@ class RebinResponse(ddosa.DataAnalysis):
 
         f = fits.open(new_rsp_fn)
 
-        assert orig_matrix_shape == f['MATRIX'].shape
+        assert orig_matrix_shape == f['MATRIX'].data.shape
 
         f['MATRIX'].header['EXTNAME'] = 'ISGR-RMF.-RSP'
         f['EBOUNDS'].header['EXTNAME'] = 'ISGR-EBDS-MOD'
