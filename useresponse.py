@@ -92,7 +92,7 @@ class RebinResponse(ddosa.DataAnalysis):
     #input_ic_ebds = FindICEBDS
     input_ebins = CompressEBins
 
-    version="v1"
+    version="v1.1"
 
     cached=True
 
