@@ -112,6 +112,9 @@ class RebinResponse(ddosa.DataAnalysis):
 
         rmf_e=fits.open(self.input_rsp.rmf_path)[1]
         rmf_e.header['EXTNAME'] = "MATRIX"
+        rmf_e.data['MATRIX'] += 1e-3 # to prevent compression which causes issues elsewhere
+
+        orig_matrix_shape = rmf_e.data['MATRIX'].shape
 
         orig_rsp_fn="original_rsp_assembled.fits"
         fits.HDUList([fits.PrimaryHDU(),orig_e,rmf_e]).writeto(orig_rsp_fn,overwrite=True)
@@ -162,6 +165,9 @@ class RebinResponse(ddosa.DataAnalysis):
         final_rsp_fn="rsp_rebinned.fits"
 
         f = fits.open(new_rsp_fn)
+
+        assert orig_matrix_shape == f['MATRIX'].shape
+
         f['MATRIX'].header['EXTNAME'] = 'ISGR-RMF.-RSP'
         f['EBOUNDS'].header['EXTNAME'] = 'ISGR-EBDS-MOD'
         f.writeto(final_rsp_fn, overwrite=True)
